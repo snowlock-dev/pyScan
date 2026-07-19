@@ -1,43 +1,59 @@
-# pyscan : ver 0.01
+# pyscan : ver 0.02
 
 import socket
 import sys
-
-target_host = input("Enter Host IP (default: 127.0.0.1):").strip()
-
-if not target_host:
-    target_host = "127.0.0.1"
-
-start_in = input("Enter starting port (default: 1):").strip()
-end_in = input("Enter starting port (default: 1024):").strip()
-
-start_port = int(start_in) if start_in else 1
-end_port   = int(end_in) if end_in else 1024
+from concurrent.futures import ThreadPoolExecutor
 
 
-print(f"[*] Started TCP scan for host: {target_host}")
-print(f"[*] Scanning ports {start_port} to {end_port}...")
 
-
-try:
-    for port in range(start_port, end_port + 1):
-        
+def scan_port(target_host, port):
+    try:
         soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         soc.settimeout(1)
         result = soc.connect_ex((target_host, port))
         
         if result == 0:
             print(f"Port {port} is open.")
+            return port
         
         soc.close()
+    
+    except socket.error:
+        print("\n[-] Could not connect to server.")
+        sys.exit()
 
-except socket.gaierror:
-    print("\n[-] Couldn't resolve hostname.")
-        
-except KeyboardInterrupt:
-    print("\n[-] Scan terminated by user.")
-    sys.exit()
+def main():
+    target_host = input("Enter Host IP (default: 127.0.0.1): ").strip() or "127.0.0.1"
 
-except socket.error:
-    print("\n[-] Could not connect to server.")
-    sys.exit()
+    start_in = input("Enter starting port (default: 1): ").strip()
+    end_in = input("Enter ending port (default: 1024): ").strip()
+
+    start_port = int(start_in) if start_in else 1
+    end_port = int(end_in) if end_in else 1024
+    
+    print(f"\n[*] Started TCP scan for host: {target_host}")
+    print(f"[*] Scanning ports {start_port} to {end_port}...")
+
+    ports_to_scan = range (start_port, end_port + 1)
+    open_ports = []
+
+    try:
+        with ThreadPoolExecutor(max_workers=100) as executor:
+            results = list(executor.map(lambda p: scan_port(target_host, p), ports_to_scan)) # map passes each port into scan_port function asynchronously
+
+        for result in results:
+            if result is not None:
+                open_ports.append(result)
+
+    except socket.gaierror:
+        print("\n[-] Couldn't resolve hostname.")
+            
+    except KeyboardInterrupt:
+        print("\n[-] Scan terminated by user.")
+        sys.exit()
+
+    print(f"[*] Scan Completed. Found {len(open_ports)} open ports")
+
+
+if __name__ == "__main__":
+    main()
