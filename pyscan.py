@@ -9,7 +9,7 @@ start_port = 1
 end_port = 1024
 
 print(f"[*] Started TCP scan for host: {target_host}")
-print(f"[*] Scannign ports {start_port} to {end_port}...")
+print(f"[*] Scanning ports {start_port} to {end_port}...")
 
 
 try:
@@ -17,7 +17,7 @@ try:
         
         soc = socket.socket(socket.AF_INET,         socket.SOCK_STREAM)
         
-        soc.settimeout(2)
+        soc.settimeout(1)
         
         result = soc.connect_ex((target_host,       port))
         
@@ -27,6 +27,9 @@ try:
             print(f"Port {port} is closed.")
         
         soc.close()
+
+except socket.gaierror:
+    print("\n[-] Couldn't resolve hostname.")
         
 except KeyboardInterrupt:
     print("\n[-] Scan terminated by user.")
