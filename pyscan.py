@@ -8,19 +8,18 @@ from concurrent.futures import ThreadPoolExecutor
 
 def scan_port(target_host, port, timeout=1.0):
     try:
-        soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        soc.settimeout(timeout)
-        result = soc.connect_ex((target_host, port))
-        
-        if result == 0:
-            print(f"Port {port} is open.")
-            return port
-        
-        soc.close()
-    
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
+            soc.settimeout(timeout)
+            result = soc.connect_ex((target_host, port))
+            
+            if result == 0:
+                print(f"Port {port} is open.")
+                return port
+            return None  # Explicit return for closed ports
+            
     except socket.error:
         print("\n[-] Could not connect to server.")
-        sys.exit()
+        return None  # Explicit return on error
 
 
 def run_scan(target_host="127.0.0.1", start_port=1, end_port=1024, max_workers=100):
