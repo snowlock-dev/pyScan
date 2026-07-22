@@ -39,3 +39,13 @@ To run the tests locally:
 ```bash
 python -m pytest
 ```
+
+## Future Roadmap:
+
+1. Swapping full TCP connections for raw SYN (half-open) packet crafting using scapy
+
+2. Probing open ports to read service headers and automatically identify running software.
+
+3. Benchmarking Python's single-threaded asyncio event loop against ThreadPoolExecutor to see which handles high concurrency better.
+
+4. Adding argparse support for custom port ranges and outputting scan results directly to JSON.
