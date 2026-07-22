@@ -2,6 +2,8 @@
 
 A fast, lightweight and simple TCP port scanner written in Python
 
+Blog: [PyScan Blog-1](https://snowlock.bearblog.dev/pyscan-devblog-1/)
+
 ## Getting Started
 
 Make sure you have python >= 3.10 installed.
