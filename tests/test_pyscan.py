@@ -1,7 +1,6 @@
 # test_pyscan.py
 
 from unittest.mock import MagicMock, patch
-import pytest
 
 from pyscan import run_scan, scan_port
 
