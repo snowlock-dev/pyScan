@@ -1,5 +1,7 @@
 # pyScan
 
+![CI Status](https://github.com/snowlock-dev/pyScan/actions/workflows/ci.yml/badge.svg)
+
 A fast, lightweight and simple TCP port scanner written in Python
 
 Blog: [PyScan Blog-1](https://snowlock.bearblog.dev/pyscan-devblog-1/)
