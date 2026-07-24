@@ -1,6 +1,6 @@
 # pyScan
 
-[![CI (Lint & Test)](https://github.com/snowlock-dev/pyScan/actions/workflows/test.yml/badge.svg)](https://github.com/snowlock-dev/pyScan/actions/workflows/test.yml)
+[![CI (Lint & Test)](https://img.shields.io/github/actions/workflow/status/snowlock-dev/pyscan/test.yml?style=for-the-badge&label=Build&labelColor=2a2a2a&logo=github)](https://github.com/snowlock-dev/pyScan/actions/workflows/test.yml)
 
 A fast, lightweight and simple TCP port scanner written in Python
 
