@@ -16,8 +16,8 @@ def scan_port(target_host, port, timeout=1.0):
                 return port
             return None  # Explicit return for closed ports
             
-    except socket.error:
-        print("\n[-] Could not connect to server.")
+    except OSError as e:
+        print(f"\n[-] Network error encountered: {e}")
         return None  # Explicit return on error
 
 
