@@ -44,7 +44,7 @@ python -m pytest
 
 ## Future Roadmap:
 
-- [ ] Add Github CI/CD tests
+- [x] Add Github CI/CD tests
 - [ ] Swapping full TCP connections for raw SYN (half-open) packet crafting using Scapy
 - [ ] Probing open ports to read service headers and automatically identify running software
 - [ ] Benchmarking Python's single-threaded `asyncio` event loop against `ThreadPoolExecutor` to see which handles high concurrency better
