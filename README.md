@@ -4,9 +4,12 @@
 
 A fast, lightweight and simple asynchronous TCP port scanner written in Python (using `asyncio`)
 
-Blogposts: 
-* [Implementing Concurrency](https://snowlock.bearblog.dev/pyscan-devblog-1/)
-* [Setting up unit tests & Github Action](https://snowlock.bearblog.dev/pyscan-devblog-2/)
+Blogposts (newest to oldest): 
+
+* [Refactoring pyScan to be asynchronous!](https://snowlock.bearblog.dev/pyscan-devblog-3/)
+* [Adding Tests & GitHub Actions](https://snowlock.bearblog.dev/pyscan-devblog-2/)
+* [Building a Concurrent TCP Port Scanner in Python](https://snowlock.bearblog.dev/pyscan-devblog-1/)
+
 
 ## Getting Started
 
