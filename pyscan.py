@@ -8,7 +8,7 @@ import sys
 async def scan_port(target_host, port, timeout=1.0):
     """Scan a single port asynchronously (IPv4 only)."""
     try:
-        reader, writer = await asyncio.wait_for(
+        writer = await asyncio.wait_for(
             asyncio.open_connection(target_host, port, family=socket.AF_INET),
             timeout=timeout
         )
