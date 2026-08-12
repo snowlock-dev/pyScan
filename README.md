@@ -51,14 +51,16 @@ The test suite verifies:
 To run the tests locally:
 
 ```bashs
-python -m pytest
+   python -m pytest
 ```
 
 ## Future Roadmap:
 
-- [x]~~Add Github CI/CD tests~~
+- [x] ~~Add Github CI/CD tests~~
 - [x] ~~Benchmarking Python's single-threaded `asyncio` event loop against `ThreadPoolExecutor` to see which handles high concurrency better~~
 - [ ] Swapping full TCP connections for raw SYN (half-open) packet crafting using Scapy
 - [ ] Probing open ports to read service headers and automatically identify running software
 - [ ] Adding `argparse` support for custom port ranges and outputting scan results directly to JSON
 - [ ] Add rate-limiting / concurrency control using asyncio.Semaphore to prevent socket exhaustion
+- [ ] Pretty Terminal UI (Rich CLI)
+- [ ] Top Ports / Common Port Presets (like `nmap`)
