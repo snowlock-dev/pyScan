@@ -2,7 +2,7 @@
 
 [![CI (Lint & Test)](https://img.shields.io/github/actions/workflow/status/snowlock-dev/pyscan/test.yml?style=for-the-badge&label=Build&labelColor=2a2a2a&logo=github)](https://github.com/snowlock-dev/pyScan/actions/workflows/test.yml)
 
-A fast, lightweight and simple TCP port scanner written in Python
+A fast, lightweight and simple asynchronous TCP port scanner written in Python (using `asyncio`)
 
 Blogposts: 
 * [Implementing Concurrency](https://snowlock.bearblog.dev/pyscan-devblog-1/)
@@ -16,12 +16,21 @@ Make sure you have python >= 3.10 installed.
 
 ```bash
    git clone https://github.com/snowlock-dev/pyScan.git
+
    cd pyScan
 ```
 
-2. Install the dependencies (`pip install -r requirements.txt`)
+2. Setup (& activate) the virtual env:
 
-3. Launch the interactive script: `python pyscan.py`
+```bash
+   python -m venv venv
+
+   source venv/bin/activate
+```
+
+3. Install the dependencies (`pip install -r requirements.txt`)
+
+4. Launch the interactive script: `python pyscan.py`
 
 You will be prompted to enter:
 
@@ -31,24 +40,25 @@ You will be prompted to enter:
 
 ## Testing
 
-Unit tests are located in the `tests/` directory and use `pytest` with `unittest.mock` to simulate network connections without requiring real network traffic. 
+Unit test is located in the `tests/` directory and use `pytest` alongside `pytest-asyncio` and `unittest.mock` to simulate asynchronous network connections without requiring real network traffic. 
 
 The test suite verifies:
-* Single open port detection
-* Closed port handling
-* Concurrent range scanning across multiple ports
-* And edge cases
+* Single open port detection & closed port handling (using mocked `asyncio.open_connection`)
+* Timeout and network error handling (`asyncio.TimeoutError`, `OSError`)
+* Asynchronous range scanning with boundary clamping and task concurrency control
+* Edge cases and invalid port ranges
 
 To run the tests locally:
 
-```bash
+```bashs
 python -m pytest
 ```
 
 ## Future Roadmap:
 
 - [x]~~Add Github CI/CD tests~~
+- [x] ~~Benchmarking Python's single-threaded `asyncio` event loop against `ThreadPoolExecutor` to see which handles high concurrency better~~
 - [ ] Swapping full TCP connections for raw SYN (half-open) packet crafting using Scapy
 - [ ] Probing open ports to read service headers and automatically identify running software
-- [ ] Benchmarking Python's single-threaded `asyncio` event loop against `ThreadPoolExecutor` to see which handles high concurrency better
 - [ ] Adding `argparse` support for custom port ranges and outputting scan results directly to JSON
+- [ ] Add rate-limiting / concurrency control using asyncio.Semaphore to prevent socket exhaustion

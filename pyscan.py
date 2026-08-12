@@ -16,7 +16,7 @@ async def scan_port(target_host, port, timeout=1.0):
         await writer.wait_closed()
         print(f"Port {port} is open.")
         return port
-        
+     
     except asyncio.TimeoutError:
         return None
     except OSError as e:
@@ -56,6 +56,7 @@ async def main():
 
     print(f"\n[*] Started TCP scan for host: {target_host}")
     print(f"[*] Scanning ports {start_port} to {end_port}...")
+
 
     try:
         open_ports = await run_scan(target_host, start_port, end_port)
