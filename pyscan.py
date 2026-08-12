@@ -1,45 +1,52 @@
-# pyscan : ver 0.02
+# pyscan : ver 0.04 (async!)
 
+import asyncio
 import socket
 import sys
-from concurrent.futures import ThreadPoolExecutor
 
 
-def scan_port(target_host, port, timeout=1.0):
+async def scan_port(target_host, port, timeout=1.0):
+    """Scan a single port asynchronously (IPv4 only)."""
     try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as soc:
-            soc.settimeout(timeout)
-            result = soc.connect_ex((target_host, port))
-            
-            if result == 0:
-                print(f"Port {port} is open.")
-                return port
-            return None  # Explicit return for closed ports
-            
+        reader, writer = await asyncio.wait_for(
+            asyncio.open_connection(target_host, port, family=socket.AF_INET),
+            timeout=timeout
+        )
+        writer.close()
+        await writer.wait_closed()
+        print(f"Port {port} is open.")
+        return port
+        
+    except asyncio.TimeoutError:
+        return None
     except OSError as e:
-        print(f"\n[-] Network error encountered: {e}")
-        return None  # Explicit return on error
+        if e.errno == 111:  # Connection refused = closed port
+            return None
+        print(f"\n[-] Network error on port {port}: {e}")
+        return None
 
 
-def run_scan(target_host="127.0.0.1", start_port=1, end_port=1024, max_workers=100):
+async def run_scan(target_host="127.0.0.1", start_port=1, end_port=1024, max_workers=100):
+    """Run asynchronous port scan with concurrency limit."""
     start_port, end_port = max(1, start_port), min(65535, end_port)
+    
     if start_port > end_port:
         print("[x] Port range invalid!")
         return []
     
-    ports_to_scan = range (start_port, end_port + 1)
-    open_ports = []
+    semaphore = asyncio.Semaphore(max_workers)
+    
+    async def scan_with_semaphore(port):
+        async with semaphore:
+            return await scan_port(target_host, port)
+    
+    tasks = [scan_with_semaphore(port) for port in range(start_port, end_port + 1)]
+    results = await asyncio.gather(*tasks)
+    
+    return [port for port in results if port is not None]
 
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        results = executor.map(lambda p: scan_port(target_host, p), ports_to_scan)
 
-    for result in results:
-        if result is not None:
-            open_ports.append(result)
-
-    return open_ports
-
-def main():
+async def main():
     target_host = input("Enter Host IP (default: 127.0.0.1): ").strip() or "127.0.0.1"
     start_in = input("Enter starting port (default: 1): ").strip()
     end_in = input("Enter ending port (default: 1024): ").strip()
@@ -51,9 +58,9 @@ def main():
     print(f"[*] Scanning ports {start_port} to {end_port}...")
 
     try:
-        open_ports = run_scan(target_host, start_port, end_port)
+        open_ports = await run_scan(target_host, start_port, end_port)
         print(f"[*] Scan Completed. Found {len(open_ports)} open ports: {open_ports}")
-    except socket.gaierror:
+    except OSError:
         print("\n[-] Couldn't resolve hostname.")
     except KeyboardInterrupt:
         print("\n[-] Scan terminated by user.")
@@ -61,4 +68,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
